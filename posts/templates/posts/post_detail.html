@@ -4,6 +4,60 @@
 {% block content %}
     <div class="card">
     <p class="card-header">{{ posts.user }}  |  {{ posts.created|date }}</p>
-    <p class="card-body">{{ posts.body }}</p>
+    <p class="card-body text-center">{{ posts.body }}</p>
+    </br>
+    {% if request.user.is_authenticated and request.user.id == posts.user.id %}
+        <a class="text-center" href="{% url 'posts:post_delete' posts.user.id posts.id %}">delete</a>
+        </br>
+        <a class="text-center" href="{%  url 'posts:post_edit' posts.user.id posts.id %}">edit post</a>
+
+    {% endif %}
     </div>
+
+    </br></br></br>
+
+    </br>
+    {%  with pc=comments.count %}
+        <p> there is {{ pc }} comment{{ pc|pluralize }}</p>
+    {% endwith %}
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'posts:post_like' posts.id %}" class="btn btn-primary {% if can_like %} disabled {% endif %}col-md-2">like   {{ posts.like_count }}</a>
+    {% endif %}
+</br>
+</br>
+</br>
+    <div class="card bg-dark text-white ">
+        {% for comment in comments %}
+            <P class="card-header">{{ comment.user }}</P>
+            <p class="card-body">{{ comment.body }} </p>
+
+            {% for reply in comment.rcomment.all %}
+                <p class="bg-primary text-white p-3 m-5">{{ reply.user }} </br> {{ reply.body }}</p>
+                </br>
+            {% endfor %}
+            <div class="crad-body">
+                    {% if request.user.is_authenticated %}
+                    <form action="{% url 'posts:add_reply' posts.id comment.id %}" method="post" class="col-md-6">
+                    {% csrf_token %}
+                    {{ reply.as_p }}
+                     <input type="submit" value="send">
+                    </form>
+                    {% else %}
+                        <p>you should loged in then you can reply</p>
+                    {% endif %}
+</div>
+        {% endfor %}
+
+            </div>
+
+    {% if request.user.is_authenticated %}
+        <form action="" method="post" class="col-md-6" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="send" class="btn btn-primary">
+        </form>
+    {% endif %}
+
+
+
 {% endblock %}

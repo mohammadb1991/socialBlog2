@@ -4,7 +4,13 @@
 {% block content %}
     <form action="" method="post" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    {{ form.username.errors }}
+    <label for="{{ form.username.id_for_label }}">username</label>
+    {{ form.username }} </br>
+    {{ form.password.errors }}
+    <label for="{{ form.password.id_for_label }}">password</label>
+        {{ form.password }} </br>
     <input type="submit" value="login" class="btn btn-primary">
 
     </form>

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ user.username }} profile{% endblock %}
+
+{% block js %}<script src="{% static 'account/js/script.js' %}"> </script>{% endblock %}
+
+{% block content %}
+    {% if self_dash %}
+    <a href="{% url 'posts:add_post' user.id %}">add post</a> </br>
+    <a href="{% url 'account:edit_profile' user.id %}">edit profile</a>
+    {% endif %}
+    <h3 class="text-center">{{ user.username }}</h3>
+    <h6 class="text-center">{{ user.profilee.age }}</h6>
+    <p class="text-center">
+    {{ user.profilee.bio }}
+    </p>
+    {% if not request.user.id == user.id and not relation %}
+    <button id="following_btn" data-id="{{ user.id }}" style="display: block" class="btn btn-primary text-center mx-auto">follow</button>
+    {% elif request.user.id != user.id and relation %}
+    <button id="following_btn" data-id="{{ user.id }}" style="display: block" class="btn btn-warning text-center mx-auto">unfollow</button>
+    {% endif %}
+    <div class="card-body">
+    {% for post in posts %}
+        <p class="text-center">
+    <a href="{{ post.get_absolute_url }}"> {{ post.body }} </a>
+            </p>
+    {% empty %}
+        <p>this user dont have any post</p>
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
